@@ -1,5 +1,5 @@
 {
-  "name": "product-services",
+  "name": "order-services",
   "version": "1.0.0",
   "description": "",
   "main": "src/index.ts",
