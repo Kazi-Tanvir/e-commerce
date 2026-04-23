@@ -1,0 +1,24 @@
+{
+  "name": "product-services",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.ts",
+  "types": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "pnpm dlx tsx --env-file=.env --watch src/index.ts",
+    "check-types": "tsc --noEmit"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@repo/typescript-config": "workspace:*"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.0.3"
+  }
+}
