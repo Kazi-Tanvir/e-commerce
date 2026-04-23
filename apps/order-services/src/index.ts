@@ -1,13 +1,17 @@
 import fastify from "fastify";
 
-const app = fastify();
+const Fastify = fastify();
+
+Fastify.post("/", (request, reply) => {
+  reply.send("Order service received a request");
+});
 
 const start = async () => {
   try {
-    await app.listen({ port: 8001 })
+    await Fastify.listen({ port: 8001 })
     console.log("Order service is running on port 8001")
   } catch (err) {
-    app.log.error(err)
+    Fastify.log.error(err)
     process.exit(1)
   }
 }

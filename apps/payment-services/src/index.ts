@@ -7,6 +7,10 @@ app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
 
+app.post('/', (c) => {
+  return c.text('Payment service received a request')
+})
+
 
 const start = async () => {
   try {
