@@ -1,9 +1,10 @@
 import express from "express";
 import cors from "cors";
-import Clerk from '@clerk/express'
+import { clerkMiddleware, getAuth } from '@clerk/express'
+import { shouldBeUser } from "./middleware/authMiddleware";
 
 const app = express();
-app.use(Clerk.clerkMiddleware())
+app.use(clerkMiddleware())
 
 app.use(cors({
     origin: ["http://localhost:3003", "http://localhost:3002"]
@@ -11,15 +12,10 @@ app.use(cors({
 app.post("/", (req, res) => {
     res.send("Product service received a request");
 });
-app.get("/test", (req, res) => {
-    const auth = Clerk.getAuth(req)
-    const userId = auth.userId
-    
-    if (!userId) {
-        return res.status(401).json({ message: "You are not logged in" });
-    }
-    console.log("Auth info in product service:", auth);
-    res.json({ message: "Product service test endpoint", userId });
+app.get("/test", shouldBeUser ,(req, res) => {
+
+    console.log("Auth info in product service:", getAuth(req));
+    res.json({ message: "Product service test endpoint", userId: req.userId });
 });
 
 app.listen(8000, () => {

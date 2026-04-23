@@ -1,5 +1,6 @@
 import Fastify from "fastify";
 import { clerkPlugin, getAuth } from "@clerk/fastify";
+import { shouldBeUser } from "./middleware/authMiddleware";
 
 const fastify = Fastify();
 fastify.register(clerkPlugin);
@@ -8,15 +9,10 @@ fastify.post("/", (request, reply) => {
   reply.send("Order service received a request");
 });
 
-fastify.get("/test", async (request, reply) => {
-  const { userId } = getAuth(request);
+fastify.get("/test", { preHandler: shouldBeUser }, async (request, reply) => {
 
-  if (!userId) {
-    return reply.status(401).send({ message: "You are not logged in" });
-  }
-
-  console.log("Auth info in order service:", userId);
-  return reply.send({ message: "Order service test endpoint", userId });
+  console.log("Auth info in order service:", request.userId);
+  return reply.send({ message: "Order service test endpoint", userId: request.userId });
 });
 
 const start = async () => {
