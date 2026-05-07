@@ -3,6 +3,7 @@ import { Hono } from 'hono'
 import { clerkMiddleware, getAuth } from '@hono/clerk-auth'
 import { cors } from 'hono/cors'
 import { shouldBeUser } from './middleware/authMiddleware.js'
+import { stripe } from './utils/stripe.js'
 
 const app = new Hono()
 
@@ -12,9 +13,25 @@ app.get('/', (c) => {
   return c.text('Hello Hono!')
 })
 
-app.get('/test', shouldBeUser, (c) => {
-  return c.json({ message: 'Payment service test endpoint', userId: c.get('userId') })
-})
+// app.post('/create-stripe-product', async (c) => {
+  // const res = await stripe.products.create({
+  //   "id": "prod_123",
+  //   "name": "T-shirt",
+  //   "description": "Comfortable cotton t-shirt",
+  //   default_price_data: {
+  //     currency: 'usd',
+  //     unit_amount: 2000,
+  //   },
+  // })
+  // return c.json(res)
+// });
+
+// app.get('/stripe-product-price', async (c) => {
+//   const res = await stripe.prices.list({ product: 'prod_123' })
+//   return c.json(res)
+// });
+
+
 
 app.post('/', (c) => {
   return c.text('Payment service received a request')
