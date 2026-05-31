@@ -1,29 +1,29 @@
-import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
-import { clerkMiddleware, getAuth } from '@hono/clerk-auth'
-import { cors } from 'hono/cors'
-import { shouldBeUser } from './middleware/authMiddleware.js'
-import { stripe } from './utils/stripe.js'
+import { serve } from "@hono/node-server";
+import { Hono } from "hono";
+import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
+import { cors } from "hono/cors";
+import { shouldBeUser } from "./middleware/authMiddleware.js";
+import { stripe } from "./utils/stripe.js";
 
-const app = new Hono()
+const app = new Hono();
 
-app.use('*', clerkMiddleware())
+app.use("*", clerkMiddleware());
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+app.get("/", (c) => {
+  return c.text("Hello Hono!");
+});
 
 // app.post('/create-stripe-product', async (c) => {
-  // const res = await stripe.products.create({
-  //   "id": "prod_123",
-  //   "name": "T-shirt",
-  //   "description": "Comfortable cotton t-shirt",
-  //   default_price_data: {
-  //     currency: 'usd',
-  //     unit_amount: 2000,
-  //   },
-  // })
-  // return c.json(res)
+// const res = await stripe.products.create({
+//   "id": "prod_123",
+//   "name": "T-shirt",
+//   "description": "Comfortable cotton t-shirt",
+//   default_price_data: {
+//     currency: 'usd',
+//     unit_amount: 2000,
+//   },
+// })
+// return c.json(res)
 // });
 
 // app.get('/stripe-product-price', async (c) => {
@@ -31,24 +31,24 @@ app.get('/', (c) => {
 //   return c.json(res)
 // });
 
-
-
-app.post('/', (c) => {
-  return c.text('Payment service received a request')
-})
-
+app.post("/", (c) => {
+  return c.text("Payment service received a request");
+});
 
 const start = async () => {
   try {
-    serve({
-      fetch: app.fetch,
-      port: 8002
-    }, (info) => {
-      console.log(`Payment service is running on port 8002`)
-    })
+    serve(
+      {
+        fetch: app.fetch,
+        port: 8002,
+      },
+      (info) => {
+        console.log(`Payment service is running on port 8002`);
+      },
+    );
   } catch (error) {
     console.log(error);
     throw error;
   }
-}
-start()
+};
+start();
