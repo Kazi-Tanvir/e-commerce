@@ -172,6 +172,9 @@ importers:
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../../packages/eslint-config
+      '@repo/types':
+        specifier: workspace:*
+        version: link:../../packages/types
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../../packages/typescript-config
@@ -347,7 +350,17 @@ importers:
         version: 6.19.3(typescript@5.9.2)
 
   packages/types:
+    dependencies:
+      '@repo/product-db':
+        specifier: workspace:*
+        version: link:../product-db
+      zod:
+        specifier: ^4.0.14
+        version: 4.3.6
     devDependencies:
+      '@repo/types':
+        specifier: workspace:*
+        version: 'link:'
       '@repo/typescript-config':
         specifier: workspace:*
         version: link:../typescript-config
