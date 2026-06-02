@@ -1,13 +1,17 @@
 import { serve } from "@hono/node-server";
 import { Hono } from "hono";
-import { clerkMiddleware, getAuth } from "@hono/clerk-auth";
+import { clerkMiddleware } from "@hono/clerk-auth";
 import { cors } from "hono/cors";
-import { shouldBeUser } from "./middleware/authMiddleware.js";
-import { stripe } from "./utils/stripe.js";
+import sessioRoute from "./routes/session.route.js";
 
 const app = new Hono();
 
 app.use("*", clerkMiddleware());
+app.use("*",cors({
+  origin:[
+    "http://localhost:3002"
+  ]
+}))
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
@@ -30,6 +34,8 @@ app.get("/", (c) => {
 //   const res = await stripe.prices.list({ product: 'prod_123' })
 //   return c.json(res)
 // });
+
+app.route("/session",sessioRoute)
 
 app.post("/", (c) => {
   return c.text("Payment service received a request");
