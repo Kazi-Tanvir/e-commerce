@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { clerkMiddleware } from "@hono/clerk-auth";
 import { cors } from "hono/cors";
 import sessioRoute from "./routes/session.route.js";
+import webhookRoute from "./routes/webhook.route.js";
 
 const app = new Hono();
 
@@ -37,6 +38,7 @@ app.get("/", (c) => {
 // });
 
 app.route("/sessions", sessioRoute);
+app.route("/webhook", webhookRoute);
 
 app.post("/", (c) => {
   return c.text("Payment service received a request");
