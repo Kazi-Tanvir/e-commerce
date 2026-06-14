@@ -1,42 +1,76 @@
 "use client";
 
-import { useAuth } from '@clerk/nextjs';
-import { useState ,useEffect } from 'react';
-import { CheckoutProvider } from '@clerk/nextjs/experimental';
-import { CheckoutForm } from '@stripe/react-stripe-js/checkout';
-import {loadStripe} from '@stripe/stripe-js';
-const stripe = loadStripe("pk_test_51TdRZlDCGnbZi1GN1Md2FwcHvzJ6cHx1aoJUURqUVFvxye7gpUnTGhl4JbEDxO3uTHXvSvHV7A2ZLpGZuMJHcOlD00Rd1FFNVf");
+import { loadStripe } from "@stripe/stripe-js";
+import { CheckoutElementsProvider } from "@stripe/react-stripe-js/checkout";
+import { useAuth } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
+import { CartItemsType, ShippingFormInputs } from "@repo/types";
+import CheckoutForm from "./CheckoutForm";
+import useCartStore from "@/stores/cartStore";
 
-// const App = () =>   {
-//   const clientSecret = useMemo(() => {
-//     return fetch('/create-checkout-session', {
-//       method: 'POST',
-//     })
-//       .then((res) => res.json())
-//       .then((data) => data.clientSecret);
-//   }, []);
+const stripePromise = loadStripe(
+  "pk_test_51TUSJw8hCKvzSSAoQFWRxMfVEvpisioiBPp4vBnjsdhjFZwsnCscfNxsjSLyWwxTgpbNkgAhZ5Ie0iyDONg2tFuV00YoCoKMN5"
+);
 
+const fetchClientSecret = async (cart: CartItemsType, token: string): Promise<string> => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL}/sessions/create-checkout-session`,
+    {
+      method: "POST",
+      body: JSON.stringify({ cart }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  const json = await response.json();
+  const secret = json.clientSecret || json.checkoutSessionClientSecret;
+  if (!secret) {
+    throw new Error("Client secret not returned by payment service");
+  }
+  return secret;
+};
 
+const StripePaymentForm = ({
+  shippingForm,
+}: {
+  shippingForm: ShippingFormInputs;
+}) => {
+  const { cart } = useCartStore();
+  const [token, setToken] = useState<string | null>(null);
+  const { getToken, isLoaded, isSignedIn } = useAuth();
 
-const fetchClientSecret = async (token:string) =>{
-    return fetch(`${process.env.NEXT_PUBLIC_PAYMENT_SERVICE_URL}/session/create-checkout-session`, {method:"POST"})
-    .then((response)=>response.json())
-    .then((data)=>data.clientSecret)
-}
-const {token , setToken} = useState<string | null >(null);
-const {getToken} = useAuth();
-useEffect(() => {
-    getToken().then((token) => setToken(token));
-},[]);
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      getToken().then((tok) => setToken(tok));
+    }
+  }, [getToken, isLoaded, isSignedIn]);
 
-if(!token) {
-    return <div className=''>Loading... </div>;
-}
-const StripePaymentForm = () => {
-    return(
-        <CheckoutProvider stripe={stripe} options={{fetchClientSecret: ()=>fetchClientSecret(token)}}>
-            <CheckoutForm/>
-        </CheckoutProvider>
-    )
-}
+  if (!isLoaded) {
+    return <div className="flex items-center justify-center p-6 text-sm text-gray-500">Loading checkout...</div>;
+  }
+
+  if (!isSignedIn) {
+    return (
+      <div className="flex flex-col items-center justify-center p-6 gap-3 border border-red-100 rounded-lg bg-red-50/50">
+        <p className="text-red-600 font-medium text-sm">Please sign in to proceed with payment.</p>
+      </div>
+    );
+  }
+
+  if (!token) {
+    return <div className="flex items-center justify-center p-6 text-sm text-gray-500">Loading payment session...</div>;
+  }
+
+  return (
+    <CheckoutElementsProvider
+      stripe={stripePromise}
+      options={{ clientSecret: fetchClientSecret(cart, token) }}
+    >
+      <CheckoutForm shippingForm={shippingForm} />
+    </CheckoutElementsProvider>
+  );
+};
+
 export default StripePaymentForm;

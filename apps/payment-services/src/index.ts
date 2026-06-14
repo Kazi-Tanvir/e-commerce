@@ -7,11 +7,12 @@ import sessioRoute from "./routes/session.route.js";
 const app = new Hono();
 
 app.use("*", clerkMiddleware());
-app.use("*",cors({
-  origin:[
-    "http://localhost:3002"
-  ]
-}))
+app.use(
+  "*",
+  cors({
+    origin: ["http://localhost:3002"],
+  }),
+);
 
 app.get("/", (c) => {
   return c.text("Hello Hono!");
@@ -35,7 +36,7 @@ app.get("/", (c) => {
 //   return c.json(res)
 // });
 
-app.route("/session",sessioRoute)
+app.route("/sessions", sessioRoute);
 
 app.post("/", (c) => {
   return c.text("Payment service received a request");
