@@ -208,6 +208,9 @@ importers:
       '@clerk/fastify':
         specifier: ^3.1.17
         version: 3.1.17(fastify@5.8.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@repo/kafka':
+        specifier: workspace:*
+        version: link:../../packages/kafka
       '@repo/order-db':
         specifier: workspace:*
         version: link:../../packages/order-db
@@ -239,6 +242,9 @@ importers:
       '@hono/node-server':
         specifier: ^1.19.14
         version: 1.19.14(hono@4.12.14)
+      '@repo/kafka':
+        specifier: workspace:*
+        version: link:../../packages/kafka
       hono:
         specifier: ^4.12.14
         version: 4.12.14
@@ -277,6 +283,9 @@ importers:
         specifier: ^5.0.3
         version: 5.2.1
     devDependencies:
+      '@repo/kafka':
+        specifier: workspace:*
+        version: link:../../packages/kafka
       '@repo/types':
         specifier: workspace:*
         version: link:../../packages/types

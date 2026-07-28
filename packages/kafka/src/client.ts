@@ -5,5 +5,5 @@ export const createKafkaClient = (services: string) => {
         clientId: 'kafka',
         brokers: ["localhost:9094", "localhost:9095", "localhost:9096"]
     });
-    
-}
+    return kafka;
+}
